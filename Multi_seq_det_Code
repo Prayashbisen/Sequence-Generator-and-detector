@@ -1,0 +1,106 @@
+## Multilevl Sequence and genrator code
+
+module mult_seq_det (clk,reset,in,out
+
+    );
+    output reg out;
+    input in,clk,reset;
+    
+    
+    seq_gen dut(.clk(clk),.reset(reset),.q(),.w(in));
+    
+    
+    parameter S0=3'b000, S1=3'b001, S2=3'b010, S3=3'b011,S4=3'b100;
+    reg [2:0] state,NS;
+    
+      
+    always @ (posedge clk, posedge reset)
+    begin
+        if(reset)
+                 state <= S0;
+        else     state <= NS;
+        
+    end
+    
+    
+    always @(state,in)
+    begin
+         case(state)
+         S0:   if(in)
+                begin 
+                NS <= S0;
+                out <= 0;
+                end
+               else
+                begin
+                NS <= S1;
+                out <= 0;
+                end    
+                
+          S1:  if(in) 
+                begin 
+                NS <= S2;
+                out <= 0;
+                end
+                
+              else
+                begin
+                NS <= S1;
+                out <= 0;
+                end     
+                
+          S2:  if(in) 
+                begin 
+                NS <= S3;
+                out <= 0;
+                end
+              else
+                begin
+                NS <= S1;
+                out <= 0;
+                end      
+                
+           S3:  if(in) 
+                begin 
+                NS <= S4;
+                out <= 1;
+                end
+               else
+                begin
+                NS <= S1;
+                out <= 0;
+                end  
+             S4:  if(in) 
+                begin 
+                NS <= S4;
+                out <= 0;
+                end
+               else
+                begin
+                NS <= S1;
+                out <= 1;
+                end  
+                    
+       default  NS<=S0;
+                
+         endcase
+    end
+endmodule
+
+module seq_gen(clk,reset,q,w
+
+    );
+    input clk,reset;
+    output reg [31:0] q;
+    output w;
+    always@(posedge clk,posedge reset)
+    begin if(reset)
+            begin  
+            q[31:0]<=32'b01111000011111101111101111011110;
+            end
+          else  
+            q<={q[0],q[31:1]};
+    
+    end
+   assign w=q[0];
+endmodule
